@@ -1,7 +1,7 @@
 import { useState } from "react";
 import QuickSort from "@kefir266/algorithms/sort/QuickSort";
 import "./App.css";
-import AlgorithmConfig from "./components/AlgoritmConfig";
+import AlgorithmConfig from "./components/AlgorithmConfig";
 import { generateRandomArray, wait } from "./lib/index";
 import ArrayGraph from "./components/ArrayGraph";
 
