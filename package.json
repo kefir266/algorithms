@@ -2,18 +2,22 @@
   "name": "@kefir266/algorithms",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "dev:debug": "nodemon --inspect index.js",
+    "start": "node index.ts",
+    "dev": "nodemon index.ts",
+    "dev:debug": "nodemon --inspect index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
   },
   "private": true,
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "husky": "^9.1.7",
     "nodemon": "^3.1.10",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }

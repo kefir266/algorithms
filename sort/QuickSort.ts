@@ -1,24 +1,30 @@
+type ComparatorFn = (a: any, b: any) => number;
+
 export default class QuickSort extends Array {
-  onSwapFn;
-  constructor(array) {
+  onSwapFn: () => void = () => {};
+  constructor(array: any) {
     super(array.length);
     for (let i = 0; i < array.length; i++) {
       this[i] = array[i];
     }
   }
 
-  onSwap(fn) {
+  onSwap(fn: () => void) {
     this.onSwapFn = fn;
   }
 
-  async swap(a1, a2) {
+  async swap(a1: any, a2: any) {
     const t = this[a1];
     this[a1] = this[a2];
     this[a2] = t;
     await this.onSwapFn();
   }
 
-  async quickSort(comparatorFn, start = 0, end = this.length - 1) {
+  async quickSort(
+    comparatorFn: ComparatorFn,
+    start = 0,
+    end = this.length - 1,
+  ) {
     if (end - start < 1) {
       return;
     }
@@ -49,7 +55,11 @@ export default class QuickSort extends Array {
     }
   }
 
-  sort(comparatorFn) {
-    this.quickSort(comparatorFn).then(() => console.log(this));
+  sort(compareFn?: ComparatorFn): this {
+    if (compareFn) {
+      this.quickSort(compareFn).then(() => console.log(this));
+    }
+
+    return this;
   }
 }
