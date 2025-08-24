@@ -1,7 +1,7 @@
-type ComparatorFn = (a: any, b: any) => number;
+import { Sort } from "./Sort";
+type CompareFn = (a: any, b: any) => number;
 
-export default class QuickSort extends Array {
-  onSwapFn: () => void = () => {};
+export default class QuickSort extends Sort {
   constructor(array: any) {
     super(array.length);
     for (let i = 0; i < array.length; i++) {
@@ -9,22 +9,7 @@ export default class QuickSort extends Array {
     }
   }
 
-  onSwap(fn: () => void) {
-    this.onSwapFn = fn;
-  }
-
-  async swap(a1: any, a2: any) {
-    const t = this[a1];
-    this[a1] = this[a2];
-    this[a2] = t;
-    await this.onSwapFn();
-  }
-
-  async quickSort(
-    comparatorFn: ComparatorFn,
-    start = 0,
-    end = this.length - 1,
-  ) {
+  async quickSort(comparatorFn: CompareFn, start = 0, end = this.length - 1) {
     if (end - start < 1) {
       return;
     }
@@ -32,6 +17,11 @@ export default class QuickSort extends Array {
     let lessPointer = null;
     let morePointer = null;
     for (let i = start + 1; i <= end; i++) {
+      while (this.isPaused) {
+        await new Promise<void>((resolve) => {
+          this.resumeResolver = resolve;
+        });
+      }
       if (comparatorFn(this[i], this[start]) < 0) {
         lessPointer = i;
         if (morePointer) {
@@ -55,11 +45,24 @@ export default class QuickSort extends Array {
     }
   }
 
-  sort(compareFn?: ComparatorFn): this {
+  sort(compareFn?: CompareFn): this {
     if (compareFn) {
-      this.quickSort(compareFn).then(() => console.log(this));
+      this.quickSort(compareFn)
+        .then(() => this.onFinishedFn())
+        .then(() => this);
     }
 
     return this;
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  resume() {
+    this.isPaused = false;
+    if (this.resumeResolver) {
+      this.resumeResolver();
+    }
   }
 }
