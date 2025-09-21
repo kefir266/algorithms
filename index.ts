@@ -1,8 +1,15 @@
-import QuickSort from "./sort/QuickSort";
+import QuickSort from "./sort/QuickSort.ts";
+import BubbleSort from "./sort/BubbleSort.ts";
 
-const quickSort = new QuickSort([5, 3, 8, 4, 2, 7, 6, 1]);
-quickSort.onSwap(() => {
-  console.log("Swapped:", quickSort);
-});
+const array = [5, 3, 8, 4, 2, 7, 6, 1];
+console.dir(array);
 
-quickSort.sort((a: any, b: any) => a - b);
+const quickSort = new QuickSort(array);
+quickSort
+  .asyncSort((a: any, b: any) => a - b)
+  .then(() => console.dir(quickSort));
+
+const bubbleSort = new BubbleSort(array);
+bubbleSort
+  .asyncSort((a: any, b: any) => a - b)
+  .then(() => console.dir(bubbleSort));

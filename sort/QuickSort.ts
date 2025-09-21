@@ -1,15 +1,11 @@
-import { Sort } from "./Sort";
-type CompareFn = (a: any, b: any) => number;
+import { type CompareFn, Sort } from "./Sort.ts";
 
-export default class QuickSort extends Sort {
-  constructor(array: any) {
-    super(array.length);
-    for (let i = 0; i < array.length; i++) {
-      this[i] = array[i];
-    }
+export default class QuickSort<T> extends Sort<T> {
+  constructor(array: Array<T>) {
+    super(array);
   }
 
-  async quickSort(comparatorFn: CompareFn, start = 0, end = this.length - 1) {
+  async asyncSort(comparatorFn: CompareFn, start = 0, end = this.length - 1) {
     if (end - start < 1) {
       return;
     }
@@ -18,6 +14,7 @@ export default class QuickSort extends Sort {
     let morePointer = null;
     for (let i = start + 1; i <= end; i++) {
       while (this.isPaused) {
+        //TODO wait()
         await new Promise<void>((resolve) => {
           this.resumeResolver = resolve;
         });
@@ -38,31 +35,20 @@ export default class QuickSort extends Sort {
 
     if (lessPointer !== null) {
       await this.swap(start, lessPointer);
-      await this.quickSort(comparatorFn, start, lessPointer - 1);
-      await this.quickSort(comparatorFn, lessPointer + 1, end);
+      await this.asyncSort(comparatorFn, start, lessPointer - 1);
+      await this.asyncSort(comparatorFn, lessPointer + 1, end);
     } else {
-      await this.quickSort(comparatorFn, start + 1, end);
+      await this.asyncSort(comparatorFn, start + 1, end);
     }
   }
 
   sort(compareFn?: CompareFn): this {
     if (compareFn) {
-      this.quickSort(compareFn)
+      this.asyncSort(compareFn)
         .then(() => this.onFinishedFn())
         .then(() => this);
     }
 
     return this;
-  }
-
-  pause() {
-    this.isPaused = true;
-  }
-
-  resume() {
-    this.isPaused = false;
-    if (this.resumeResolver) {
-      this.resumeResolver();
-    }
   }
 }

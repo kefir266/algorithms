@@ -1,5 +1,19 @@
-export abstract class Sort extends Array {
+export type CompareFn = (a: any, b: any) => number;
+
+export abstract class Sort<T> extends Array<T> {
   isPaused = false;
+
+  constructor(array: Array<T>) {
+    super(array.length);
+    for (let i = 0; i < array.length; i++) {
+      this[i] = array[i];
+    }
+  }
+
+  at(index: number): T | undefined {
+    return this[index];
+  }
+
   resumeResolver?: (resolve: void | PromiseLike<void>) => void;
   onSwapFn: () => void = () => {};
   onFinishedFn: () => void = () => {};
@@ -19,6 +33,20 @@ export abstract class Sort extends Array {
     await this.onSwapFn();
   }
 
-  abstract pause(): void;
-  abstract resume(): void;
+  async wait() {
+    await new Promise<void>((resolve) => {
+      this.resumeResolver = resolve;
+    });
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  resume() {
+    this.isPaused = false;
+    if (this.resumeResolver) {
+      this.resumeResolver();
+    }
+  }
 }
