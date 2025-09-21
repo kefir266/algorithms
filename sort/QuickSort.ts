@@ -14,10 +14,7 @@ export default class QuickSort<T> extends Sort<T> {
     let morePointer = null;
     for (let i = start + 1; i <= end; i++) {
       while (this.isPaused) {
-        //TODO wait()
-        await new Promise<void>((resolve) => {
-          this.resumeResolver = resolve;
-        });
+        await this.wait();
       }
       if (comparatorFn(this[i], this[start]) < 0) {
         lessPointer = i;
