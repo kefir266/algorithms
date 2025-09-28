@@ -15,10 +15,10 @@ export abstract class Sort<T> extends Array<T> {
   }
 
   resumeResolver?: (resolve: void | PromiseLike<void>) => void;
-  onSwapFn: () => void = () => {};
+  onSwapFn: () => Promise<void> = () => Promise.resolve();
   onFinishedFn: () => void = () => {};
 
-  onSwap(fn: () => void) {
+  onSwap(fn: () => Promise<void>) {
     this.onSwapFn = fn;
   }
 
@@ -37,6 +37,18 @@ export abstract class Sort<T> extends Array<T> {
     await new Promise<void>((resolve) => {
       this.resumeResolver = resolve;
     });
+  }
+
+  abstract asyncSort(comparatorFn: CompareFn): Promise<void>;
+
+  sort(compareFn?: CompareFn): this {
+    if (compareFn) {
+      this.asyncSort(compareFn)
+        .then(() => this.onFinishedFn())
+        .then(() => this);
+    }
+
+    return this;
   }
 
   pause() {

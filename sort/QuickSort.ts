@@ -38,14 +38,4 @@ export default class QuickSort<T> extends Sort<T> {
       await this.asyncSort(comparatorFn, start + 1, end);
     }
   }
-
-  sort(compareFn?: CompareFn): this {
-    if (compareFn) {
-      this.asyncSort(compareFn)
-        .then(() => this.onFinishedFn())
-        .then(() => this);
-    }
-
-    return this;
-  }
 }

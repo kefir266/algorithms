@@ -20,14 +20,4 @@ export default class BubbleSort<T> extends Sort<T> {
       lastUnsorted--;
     } while (firstUnsorted < lastUnsorted);
   }
-
-  sort(compareFn?: CompareFn): this {
-    if (compareFn) {
-      this.asyncSort(compareFn)
-        .then(() => this.onFinishedFn())
-        .then(() => this);
-    }
-
-    return this;
-  }
 }
